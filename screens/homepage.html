@@ -1,19 +1,23 @@
 <!--
   Interaction Thesis:
-  "The user just landed on Astro-Volga Bank for the first time. They're curious but guarded.
-  They arrive from search or an ad. They want to feel that this bank is different — rooted,
-  vast, trustworthy. The unforgettable micro-moment is the atmospheric river-at-sunset
-  background that breathes depth and calm authority before any content appears."
+  "The user lands on Astro-Volga Bank homepage. They're a regional car owner or insurance agent,
+  curious but skeptical. The 11% rate hits them first — big, undeniable. The card floats on the
+  right like a physical object they could reach for. The atmosphere behind is a sunset river —
+  calm authority. Movement is minimal: numbers count up, card drifts in, nav is already there.
+  ONE CTA dominates: open an account."
 
-  Phase 1: Background atmosphere only — recreating ФОН.png (Volga river sunset) in CSS.
-  No content. Full viewport. Mood, color, depth, texture.
+  Layout source: Скелет.png — adapted to Astro-Volga brand
+  Background: preserved from Phase 1 (ФОН.png CSS recreation)
+
+  Unforgettable moment: the 11% — massive, unavoidable, counting up from 0.
 -->
 <!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Астро-Волга Банк</title>
+  <title>Астро-Волга Банк — Честный банк</title>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;800;900&family=Golos+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after {
       margin: 0;
@@ -25,32 +29,35 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
+      font-family: 'Golos Text', sans-serif;
+      color: #FFFFFF;
+      -webkit-font-smoothing: antialiased;
     }
 
+    /* ============================================
+       BACKGROUND ATMOSPHERE — DO NOT MODIFY
+       Recreated from ФОН.png (Phase 1)
+       ============================================ */
     .atmosphere {
-      position: relative;
+      position: fixed;
       width: 100%;
       height: 100vh;
       overflow: hidden;
+      z-index: 0;
 
-      /* Layer 1: Base sky-to-water gradient
-         Dark navy top → muted steel blue → warm amber glow at horizon → reflected warm water below */
       background:
-        /* Layer 4: Subtle radial sun glow at the horizon center */
         radial-gradient(
           ellipse 40% 25% at 50% 54%,
           rgba(255, 225, 150, 0.35) 0%,
           rgba(255, 200, 100, 0.15) 30%,
           transparent 70%
         ),
-        /* Layer 3: Bright sun reflection streak on water — narrow vertical band */
         radial-gradient(
           ellipse 8% 40% at 50% 65%,
           rgba(255, 235, 180, 0.30) 0%,
           rgba(255, 215, 140, 0.10) 40%,
           transparent 80%
         ),
-        /* Layer 2: Warm horizon band — golden glow across the middle */
         linear-gradient(
           180deg,
           transparent 40%,
@@ -59,38 +66,34 @@
           rgba(200, 160, 80, 0.12) 58%,
           transparent 70%
         ),
-        /* Layer 1: Main sky-to-water gradient */
         linear-gradient(
           180deg,
-          #0a0e1f 0%,            /* near-black at very top */
-          #111832 8%,            /* deep navy */
-          #1B1F3B 18%,           /* Dark Navy token */
-          #2a3358 30%,           /* muted navy-blue */
-          #4a5575 40%,           /* steel blue-gray sky near horizon */
-          #7a8095 48%,           /* lighter gray-blue haze */
-          #9a9585 52%,           /* warm gray — atmospheric haze at horizon */
-          #8a8070 56%,           /* muted warm tone — top of water */
-          #5a5a60 62%,           /* water — darker reflection */
-          #3a3e50 70%,           /* water — deeper */
-          #252840 80%,           /* water — dark navy reflection */
-          #12152B 95%            /* Dark Navy Deep token — bottom */
+          #0a0e1f 0%,
+          #111832 8%,
+          #1B1F3B 18%,
+          #2a3358 30%,
+          #4a5575 40%,
+          #7a8095 48%,
+          #9a9585 52%,
+          #8a8070 56%,
+          #5a5a60 62%,
+          #3a3e50 70%,
+          #252840 80%,
+          #12152B 95%
         );
     }
 
-    /* Atmospheric haze — soft warm glow around the sun position */
     .atmosphere::before {
       content: '';
       position: absolute;
       inset: 0;
       background:
-        /* Wide atmospheric scatter from sun */
         radial-gradient(
           ellipse 70% 35% at 50% 53%,
           rgba(255, 230, 170, 0.12) 0%,
           rgba(200, 180, 130, 0.06) 40%,
           transparent 70%
         ),
-        /* Slight vignette — darker corners */
         radial-gradient(
           ellipse 80% 80% at 50% 50%,
           transparent 40%,
@@ -99,7 +102,6 @@
       pointer-events: none;
     }
 
-    /* Noise texture — design system token */
     .atmosphere::after {
       content: '';
       position: absolute;
@@ -108,9 +110,629 @@
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
       pointer-events: none;
     }
+
+    /* ============================================
+       CONTENT LAYER — on top of atmosphere
+       ============================================ */
+    .page {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* — NAV — */
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 16px;
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .nav-logo {
+      font-family: 'Unbounded', sans-serif;
+      font-weight: 800;
+      font-size: 14px;
+      letter-spacing: -0.02em;
+      color: #FFFFFF;
+      white-space: nowrap;
+    }
+
+    .nav-links {
+      display: none;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'Golos Text', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      transition: color 150ms ease;
+    }
+
+    .nav-links a:hover {
+      color: #FFFFFF;
+    }
+
+    .nav-links .active {
+      color: #FFFFFF;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .nav-signin {
+      font-family: 'Golos Text', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      transition: color 150ms ease;
+    }
+
+    .nav-signin:hover {
+      color: #FFFFFF;
+    }
+
+    .nav-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 1000px;
+      background: rgba(255, 255, 255, 0.12);
+      display: none;
+    }
+
+    /* — HERO — */
+    .hero {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+      position: relative;
+    }
+
+    .hero-content {
+      max-width: 520px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-label {
+      font-family: 'Golos Text', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.5);
+      margin-bottom: 8px;
+    }
+
+    .hero-rate {
+      font-family: 'Unbounded', sans-serif;
+      font-weight: 900;
+      font-size: 40px;
+      line-height: 1.0;
+      letter-spacing: -0.03em;
+      color: #FFFFFF;
+      margin-bottom: 24px;
+    }
+
+    .hero-rate .percent {
+      font-size: 0.6em;
+      vertical-align: super;
+      line-height: 0;
+      position: relative;
+      top: -0.15em;
+    }
+
+    .hero-desc {
+      font-family: 'Golos Text', sans-serif;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 1.5;
+      color: rgba(255, 255, 255, 0.7);
+      max-width: 420px;
+      margin-bottom: 32px;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      background: #0067B1;
+      color: #FFFFFF;
+      font-family: 'Golos Text', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 150ms ease, transform 150ms ease, box-shadow 150ms ease;
+      box-shadow: 0 2px 8px rgba(0, 103, 177, 0.24);
+    }
+
+    .btn-primary:hover {
+      background: #005A9E;
+      box-shadow: 0 4px 16px rgba(0, 103, 177, 0.35);
+    }
+
+    .btn-primary:active {
+      transform: scale(0.97);
+      opacity: 0.8;
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      padding: 14px 28px;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.7);
+      font-family: 'Golos Text', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 16px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: color 150ms ease, border-color 150ms ease, transform 150ms ease;
+    }
+
+    .btn-secondary:hover {
+      color: #FFFFFF;
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .btn-secondary:active {
+      transform: scale(0.97);
+      opacity: 0.8;
+    }
+
+    /* — CARD MOCKUP — */
+    .hero-card {
+      display: none;
+      position: absolute;
+      right: -15%;
+      top: 50%;
+      transform: translateY(-50%);
+      transform-style: preserve-3d;
+      perspective: 1200px;
+      z-index: 1;
+    }
+
+    .card-mockup {
+      width: 400px;
+      height: 252px;
+      border-radius: 16px;
+      background:
+        /* Shimmer highlight — top-left catch light */
+        linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 40%),
+        /* Depth gradient — dark card surface */
+        linear-gradient(165deg, #222842 0%, #181c30 40%, #0e1122 100%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow:
+        /* Contact shadow — tight, directly under card */
+        0 2px 4px rgba(0, 0, 0, 0.3),
+        /* Mid shadow — card lift */
+        0 12px 32px rgba(0, 0, 0, 0.4),
+        /* Deep shadow — dramatic depth */
+        0 32px 80px rgba(0, 0, 0, 0.5),
+        /* Ambient blue glow — subtle, from atmosphere */
+        0 0 60px rgba(0, 103, 177, 0.08),
+        /* Inner top edge — light catch */
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        /* Inner bottom edge — subtle depth */
+        inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+      transform: rotateY(-5deg) rotateX(3deg);
+      transform-style: preserve-3d;
+    }
+
+    /* Card shimmer — moving light reflection */
+    .card-mockup::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        /* Top-left gloss */
+        radial-gradient(ellipse 50% 40% at 20% 15%, rgba(255,255,255,0.06) 0%, transparent 70%),
+        /* Card Shimmer from design system */
+        linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 50%);
+      pointer-events: none;
+    }
+
+    /* Card chip */
+    .card-mockup::after {
+      content: '';
+      position: absolute;
+      top: 28px;
+      right: 28px;
+      width: 36px;
+      height: 28px;
+      border-radius: 4px;
+      background: linear-gradient(145deg, #c4a44e 0%, #9a7e38 50%, #c4a44e 100%);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -1px 0 rgba(0,0,0,0.2);
+      opacity: 0.7;
+    }
+
+    .card-bank-name {
+      font-family: 'Unbounded', sans-serif;
+      font-weight: 700;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.5);
+      margin-bottom: 48px;
+    }
+
+    .card-number {
+      font-family: 'Golos Text', sans-serif;
+      font-size: 20px;
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      color: rgba(255, 255, 255, 0.85);
+      margin-bottom: 28px;
+    }
+
+    .card-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .card-holder {
+      font-family: 'Golos Text', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.45);
+    }
+
+    .card-system {
+      width: 48px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-mir {
+      display: flex;
+      gap: 2px;
+      align-items: center;
+    }
+
+    .card-mir span {
+      font-family: 'Golos Text', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.6);
+      letter-spacing: 0.05em;
+    }
+
+    /* — ROAD LINE DIVIDER — */
+    .road-line {
+      height: 2px;
+      background: #0067B1;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 300ms ease-out;
+      margin-bottom: 20px;
+      width: 100%;
+      max-width: 360px;
+    }
+
+    .road-line.visible {
+      transform: scaleX(1);
+    }
+
+    /* — BOTTOM STATS — */
+    .hero-stats {
+      position: absolute;
+      bottom: 40px;
+      left: 16px;
+      z-index: 2;
+      max-width: 1200px;
+    }
+
+    .stats-row {
+      display: flex;
+      gap: 40px;
+    }
+
+    .stat {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .stat-label {
+      font-family: 'Golos Text', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .stat-value {
+      font-family: 'Unbounded', sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+      color: #FFFFFF;
+      letter-spacing: -0.01em;
+    }
+
+    /* ============================================
+       RESPONSIVE — tablet + desktop
+       ============================================ */
+    @media (min-width: 768px) {
+      .nav {
+        padding: 24px 24px;
+      }
+
+      .nav-logo {
+        font-size: 16px;
+      }
+
+      .nav-links {
+        display: flex;
+      }
+
+      .nav-avatar {
+        display: block;
+      }
+
+      .hero {
+        padding: 0 24px;
+      }
+
+      .hero-rate {
+        font-size: 72px;
+      }
+
+      .hero-desc {
+        font-size: 18px;
+      }
+
+      .hero-card {
+        display: block;
+      }
+
+      .hero-stats {
+        left: 24px;
+        bottom: 48px;
+      }
+
+      .stats-row {
+        gap: 56px;
+      }
+
+      .stat-value {
+        font-size: 22px;
+      }
+    }
+
+    @media (min-width: 1200px) {
+      .nav {
+        padding: 24px 0;
+      }
+
+      .hero {
+        padding: 0;
+      }
+
+      .hero-stats {
+        left: 0;
+        bottom: 56px;
+      }
+    }
+
+    /* ============================================
+       ENTRANCE ANIMATIONS
+       ============================================ */
+    .hero-label,
+    .hero-rate,
+    .hero-desc,
+    .hero-ctas,
+    .hero-stats .stat,
+    .road-line-wrap {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+
+    .hero-card {
+      opacity: 0;
+      transform: translateY(-50%) translateX(80px);
+    }
+
+    .nav {
+      opacity: 0;
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+      .hero-label, .hero-rate, .hero-desc, .hero-ctas, .hero-card, .hero-stats .stat, .nav, .road-line {
+        opacity: 1;
+        transform: none;
+      }
+      .hero-card {
+        transform: translateY(-50%);
+      }
+      .road-line {
+        transform: scaleX(1);
+      }
+    }
   </style>
 </head>
 <body>
+  <!-- Background atmosphere (Phase 1 — untouched) -->
   <div class="atmosphere"></div>
+
+  <!-- Content layer -->
+  <div class="page">
+    <!-- Navigation -->
+    <nav class="nav">
+      <div class="nav-logo">АСТРО-ВОЛГА</div>
+      <ul class="nav-links">
+        <li><a href="#" class="active">Вклады</a></li>
+        <li><a href="#">Карты</a></li>
+        <li><a href="#">Агентам</a></li>
+        <li><a href="#">Страхование</a></li>
+      </ul>
+      <div class="nav-right">
+        <a href="#" class="nav-signin">Войти</a>
+        <div class="nav-avatar"></div>
+      </div>
+    </nav>
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-content">
+        <div class="hero-label">Ставка по накопительному счёту</div>
+        <div class="hero-rate"><span class="rate-number">11</span><span class="percent">%</span></div>
+        <p class="hero-desc">Карта агента с&nbsp;кешбэком 1,5% без&nbsp;ограничений. Начисление на&nbsp;остаток каждый день. Подключение за&nbsp;5&nbsp;минут онлайн.</p>
+        <div class="hero-ctas">
+          <a href="#" class="btn-primary">Открыть счёт <span>→</span></a>
+          <a href="#" class="btn-secondary">Подробнее</a>
+        </div>
+      </div>
+
+      <!-- Card mockup (desktop) -->
+      <div class="hero-card">
+        <div class="card-mockup">
+          <div class="card-bank-name">Астро-Волга Банк</div>
+          <div class="card-number">2200 8810 •••• 4927</div>
+          <div class="card-bottom">
+            <div class="card-holder">Карта агента</div>
+            <div class="card-system">
+              <div class="card-mir"><span>МИР</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom stats with road-line divider -->
+      <div class="hero-stats">
+        <div class="road-line"></div>
+        <div class="stats-row">
+          <div class="stat">
+            <div class="stat-label">Премии группы</div>
+            <div class="stat-value">9,2 млрд ₽</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Рейтинг АКРА</div>
+            <div class="stat-value">A+(RU)</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Офисы</div>
+            <div class="stat-value">250+</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Entrance animation — orchestrated emergence
+    // Nav → Label → Rate (count-up) → Desc → CTAs → Card (highway reveal) → Road line → Stats
+    const ease = 'cubic-bezier(0.16, 1, 0.3, 1)';
+
+    function animate(el, delay) {
+      if (!el) return;
+      setTimeout(() => {
+        el.style.transition = `opacity 400ms ${ease}, transform 400ms ${ease}`;
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0)';
+      }, delay);
+    }
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (!prefersReducedMotion) {
+      // Set initial state for rate number
+      const rateEl = document.querySelector('.rate-number');
+      rateEl.textContent = '0';
+
+      const nav = document.querySelector('.nav');
+      nav.style.transition = `opacity 400ms ${ease}`;
+      setTimeout(() => { nav.style.opacity = '1'; }, 100);
+
+      animate(document.querySelector('.hero-label'), 200);
+      animate(document.querySelector('.hero-rate'), 300);
+      animate(document.querySelector('.hero-desc'), 450);
+      animate(document.querySelector('.hero-ctas'), 550);
+
+      // Card — highway reveal (translateX entrance)
+      const card = document.querySelector('.hero-card');
+      if (card) {
+        setTimeout(() => {
+          card.style.transition = `opacity 500ms ${ease}, transform 500ms ${ease}`;
+          card.style.opacity = '1';
+          card.style.transform = 'translateY(-50%) translateX(0)';
+        }, 500);
+      }
+
+      // Road line — scaleX reveal
+      const roadLine = document.querySelector('.road-line');
+      setTimeout(() => {
+        roadLine.classList.add('visible');
+      }, 600);
+
+      // Stats — staggered 60ms
+      document.querySelectorAll('.hero-stats .stat').forEach((stat, i) => {
+        animate(stat, 700 + (i * 60));
+      });
+
+      // Odometer count-up — 0 → 11 in 800ms ease-out
+      const target = 11;
+      const duration = 800;
+      let countStarted = false;
+
+      setTimeout(() => {
+        countStarted = true;
+        const start = performance.now();
+
+        function countUp(now) {
+          const elapsed = now - start;
+          const progress = Math.min(elapsed / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          const current = Math.round(eased * target);
+          rateEl.textContent = current;
+          if (progress < 1) requestAnimationFrame(countUp);
+        }
+
+        requestAnimationFrame(countUp);
+      }, 350);
+    }
+  </script>
 </body>
 </html>
