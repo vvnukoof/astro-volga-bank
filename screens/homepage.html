@@ -28,7 +28,6 @@
     html, body {
       width: 100%;
       height: 100%;
-      overflow: hidden;
       font-family: 'Golos Text', sans-serif;
       color: #FFFFFF;
       -webkit-font-smoothing: antialiased;
@@ -45,7 +44,7 @@
       overflow: hidden;
       z-index: 0;
 
-      background: url('assets/volga-bg.png') center / cover no-repeat;
+      background: url('assets/volga-bg.png') center 20% / cover no-repeat;
     }
 
     .atmosphere::before {
@@ -171,14 +170,14 @@
       font-weight: 600;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.5);
+      color: #D20000;
       margin-bottom: 8px;
     }
 
     .hero-rate {
       font-family: 'Unbounded', sans-serif;
       font-weight: 900;
-      font-size: 40px;
+      font-size: 56px;
       line-height: 1.0;
       letter-spacing: -0.03em;
       color: #FFFFFF;
@@ -275,6 +274,17 @@
       z-index: 1;
     }
 
+    @keyframes card-float {
+      0%, 100% { transform: perspective(1000px) rotateY(-8deg) rotateX(3deg) translateY(0); }
+      50% { transform: perspective(1000px) rotateY(-8deg) rotateX(3deg) translateY(-8px); }
+    }
+
+    @keyframes headlight-pulse {
+      0% { box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15), 0 0 0 rgba(255, 215, 0, 0); }
+      50% { box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15), 0 0 24px rgba(255, 215, 0, 0.4); }
+      100% { box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15), 0 0 0 rgba(255, 215, 0, 0); }
+    }
+
     .card-mockup {
       width: 400px;
       height: 252px;
@@ -285,24 +295,14 @@
         /* Depth gradient — dark card surface */
         linear-gradient(165deg, #222842 0%, #181c30 40%, #0e1122 100%);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow:
-        /* Contact shadow — tight, directly under card */
-        0 2px 4px rgba(0, 0, 0, 0.3),
-        /* Mid shadow — card lift */
-        0 12px 32px rgba(0, 0, 0, 0.4),
-        /* Deep shadow — dramatic depth */
-        0 32px 80px rgba(0, 0, 0, 0.5),
-        /* Ambient blue glow — subtle, from atmosphere */
-        0 0 60px rgba(0, 103, 177, 0.08),
-        /* Inner top edge — light catch */
-        inset 0 1px 0 rgba(255, 255, 255, 0.08),
-        /* Inner bottom edge — subtle depth */
-        inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+      /* Card Elevated shadow from design system */
+      box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15);
       padding: 28px;
       position: relative;
       overflow: hidden;
-      transform: rotateY(-5deg) rotateX(3deg);
+      transform: perspective(1000px) rotateY(-8deg) rotateX(3deg);
       transform-style: preserve-3d;
+      animation: card-float 3s ease-in-out infinite, headlight-pulse 400ms ease-in-out 1s 1;
     }
 
     /* Card shimmer — moving light reflection */
@@ -466,7 +466,7 @@
       }
 
       .hero-rate {
-        font-size: 72px;
+        font-size: 96px;
       }
 
       .hero-desc {
@@ -521,7 +521,7 @@
 
     .hero-card {
       opacity: 0;
-      transform: translateY(-50%) translateX(80px);
+      transform: translateY(-50%) translateX(80px) rotate(15deg);
     }
 
     .nav {
@@ -540,6 +540,10 @@
       }
       .hero-card {
         transform: translateY(-50%);
+      }
+      .card-mockup {
+        animation: none;
+        transform: perspective(1000px) rotateY(-8deg) rotateX(3deg);
       }
       .road-line {
         transform: scaleX(1);
@@ -600,7 +604,7 @@
         <div class="stats-row">
           <div class="stat">
             <div class="stat-label">Премии группы</div>
-            <div class="stat-value">9,2 млрд ₽</div>
+            <div class="stat-value" data-count="9.2" data-suffix=" млрд ₽" data-decimal="1">0 млрд ₽</div>
           </div>
           <div class="stat">
             <div class="stat-label">Рейтинг АКРА</div>
@@ -608,7 +612,7 @@
           </div>
           <div class="stat">
             <div class="stat-label">Офисы</div>
-            <div class="stat-value">250+</div>
+            <div class="stat-value" data-count="250" data-suffix="+" data-decimal="0">0+</div>
           </div>
         </div>
       </div>
@@ -617,7 +621,7 @@
 
   <script>
     // Entrance animation — orchestrated emergence
-    // Nav → Label → Rate (count-up) → Desc → CTAs → Card (highway reveal) → Road line → Stats
+    // Nav → Label → Rate (count-up) → Desc → CTAs → Card (highway reveal) → Road line → Stats (odometer)
     const ease = 'cubic-bezier(0.16, 1, 0.3, 1)';
 
     function animate(el, delay) {
@@ -627,6 +631,23 @@
         el.style.opacity = '1';
         el.style.transform = 'translateY(0)';
       }, delay);
+    }
+
+    // Odometer count-up helper
+    function countUp(el, target, duration, decimal, suffix) {
+      const start = performance.now();
+      function tick(now) {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+        const current = eased * target;
+        const formatted = decimal > 0
+          ? current.toFixed(decimal).replace('.', ',')
+          : Math.round(current).toString();
+        el.textContent = formatted + suffix;
+        if (progress < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
     }
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -661,31 +682,33 @@
         roadLine.classList.add('visible');
       }, 600);
 
-      // Stats — staggered 60ms
+      // Stats — staggered emergence + odometer count-up
+      // Stagger: first at 400ms, each next 150ms later
       document.querySelectorAll('.hero-stats .stat').forEach((stat, i) => {
-        animate(stat, 700 + (i * 60));
+        const delay = 400 + (i * 150);
+        animate(stat, delay);
+
+        // Odometer count-up for stats with data-count
+        const valueEl = stat.querySelector('.stat-value[data-count]');
+        if (valueEl) {
+          const target = parseFloat(valueEl.dataset.count);
+          const suffix = valueEl.dataset.suffix || '';
+          const decimal = parseInt(valueEl.dataset.decimal) || 0;
+          setTimeout(() => countUp(valueEl, target, 800, decimal, suffix), delay);
+        }
       });
 
-      // Odometer count-up — 0 → 11 in 800ms ease-out
-      const target = 11;
-      const duration = 800;
-      let countStarted = false;
-
+      // Hero rate odometer count-up — 0 → 11 in 800ms ease-out
       setTimeout(() => {
-        countStarted = true;
-        const start = performance.now();
-
-        function countUp(now) {
-          const elapsed = now - start;
-          const progress = Math.min(elapsed / duration, 1);
-          const eased = 1 - Math.pow(1 - progress, 3);
-          const current = Math.round(eased * target);
-          rateEl.textContent = current;
-          if (progress < 1) requestAnimationFrame(countUp);
-        }
-
-        requestAnimationFrame(countUp);
+        countUp(rateEl, 11, 800, 0, '');
       }, 350);
+
+      // Parallax — background moves at 0.3x scroll speed
+      const atmosphere = document.querySelector('.atmosphere');
+      window.addEventListener('scroll', () => {
+        const scrollY = window.scrollY;
+        atmosphere.style.transform = `translateY(${scrollY * 0.3}px)`;
+      }, { passive: true });
     }
   </script>
 </body>
