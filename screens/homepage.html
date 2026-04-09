@@ -296,18 +296,19 @@
     .card-reflection {
       position: absolute;
       inset: -40px;
+      z-index: 1;
       background: url('assets/volga-bg.png') center 40% / 800px auto no-repeat;
-      filter: blur(20px) saturate(0.2);
-      opacity: 0.09;
+      filter: blur(12px) saturate(0.3);
+      opacity: 0.20;
       pointer-events: none;
-      will-change: transform;
-      transition: transform 200ms ease;
+      will-change: background-position, transform;
     }
 
     /* Layer 2: Diagonal specular highlight — light catching a car hood */
     .card-specular {
       position: absolute;
       inset: 0;
+      z-index: 2;
       background: linear-gradient(
         125deg,
         transparent 0%,
@@ -338,6 +339,7 @@
       content: '';
       position: absolute;
       inset: 0;
+      z-index: 2;
       background: radial-gradient(ellipse 60% 50% at 15% 10%, rgba(255,255,255,0.04) 0%, transparent 70%);
       pointer-events: none;
     }
@@ -345,6 +347,7 @@
     /* Card chip — gold EMV contact */
     .card-chip {
       position: absolute;
+      z-index: 2;
       top: 28px;
       right: 28px;
       width: 36px;
@@ -674,6 +677,9 @@
     </div>
   </div>
 
+  <!-- TEMP: scroll spacer for parallax testing — remove later -->
+  <div style="position:relative;z-index:1;height:200vh;background:#12152B;"></div>
+
   <script>
     // Entrance animation — orchestrated emergence
     // Nav → Label → Rate (count-up) → Desc → CTAs → Card (highway reveal) → Road line → Stats (odometer)
@@ -769,12 +775,11 @@
             cardSpecular.style.transform = `translate(${x * 30}px, ${y * 20}px)`;
           }
 
-          // Shift reflection opposite to tilt, combined with scroll offset
+          // Shift reflection opposite to tilt
           mouseOffsetX = x * -20;
           mouseOffsetY = y * -20;
           if (cardReflection) {
-            const scrollOffset = window.scrollY * 0.05;
-            cardReflection.style.transform = `translate(${mouseOffsetX}px, ${mouseOffsetY + scrollOffset}px)`;
+            cardReflection.style.transform = `translate(${mouseOffsetX}px, ${mouseOffsetY}px)`;
           }
         });
 
@@ -787,8 +792,7 @@
             cardSpecular.style.transform = 'translate(0, 0)';
           }
           if (cardReflection) {
-            const scrollOffset = window.scrollY * 0.05;
-            cardReflection.style.transform = `translate(0px, ${scrollOffset}px)`;
+            cardReflection.style.transform = 'translate(0, 0)';
           }
         });
       }
@@ -820,14 +824,14 @@
         countUp(rateEl, 11, 800, 0, '');
       }, 350);
 
-      // Parallax — background moves at 0.3x scroll speed, card reflection at 0.05x
+      // Parallax — background moves at 0.3x scroll speed, card reflection at 0.3x (testing)
       const atmosphere = document.querySelector('.atmosphere');
       window.addEventListener('scroll', () => {
         const scrollY = window.scrollY;
         atmosphere.style.transform = `translateY(${scrollY * 0.3}px)`;
         if (cardReflection) {
-          const scrollOffset = scrollY * 0.05;
-          cardReflection.style.transform = `translate(${mouseOffsetX}px, ${mouseOffsetY + scrollOffset}px)`;
+          const baseY = 40; // matches CSS "center 40%"
+          cardReflection.style.backgroundPositionY = `calc(${baseY}% + ${scrollY * 0.3}px)`;
         }
       }, { passive: true });
     }
