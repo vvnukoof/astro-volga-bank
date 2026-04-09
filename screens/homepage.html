@@ -7,7 +7,7 @@
   ONE CTA dominates: open an account."
 
   Layout source: Скелет.png — adapted to Astro-Volga brand
-  Background: preserved from Phase 1 (ФОН.png CSS recreation)
+  Background: volga-bg.png (GAZ-21 from Stitch) + rgba(27,31,59,0.8) overlay + noise
 
   Unforgettable moment: the 11% — massive, unavoidable, counting up from 0.
 -->
@@ -35,8 +35,8 @@
     }
 
     /* ============================================
-       BACKGROUND ATMOSPHERE — DO NOT MODIFY
-       Recreated from ФОН.png (Phase 1)
+       BACKGROUND ATMOSPHERE — volga-bg.png + overlay
+       GAZ-21 Volga from Stitch project
        ============================================ */
     .atmosphere {
       position: fixed;
@@ -45,60 +45,14 @@
       overflow: hidden;
       z-index: 0;
 
-      background:
-        radial-gradient(
-          ellipse 40% 25% at 50% 54%,
-          rgba(255, 225, 150, 0.35) 0%,
-          rgba(255, 200, 100, 0.15) 30%,
-          transparent 70%
-        ),
-        radial-gradient(
-          ellipse 8% 40% at 50% 65%,
-          rgba(255, 235, 180, 0.30) 0%,
-          rgba(255, 215, 140, 0.10) 40%,
-          transparent 80%
-        ),
-        linear-gradient(
-          180deg,
-          transparent 40%,
-          rgba(200, 160, 80, 0.15) 50%,
-          rgba(220, 180, 100, 0.20) 54%,
-          rgba(200, 160, 80, 0.12) 58%,
-          transparent 70%
-        ),
-        linear-gradient(
-          180deg,
-          #0a0e1f 0%,
-          #111832 8%,
-          #1B1F3B 18%,
-          #2a3358 30%,
-          #4a5575 40%,
-          #7a8095 48%,
-          #9a9585 52%,
-          #8a8070 56%,
-          #5a5a60 62%,
-          #3a3e50 70%,
-          #252840 80%,
-          #12152B 95%
-        );
+      background: url('assets/volga-bg.png') center / cover no-repeat;
     }
 
     .atmosphere::before {
       content: '';
       position: absolute;
       inset: 0;
-      background:
-        radial-gradient(
-          ellipse 70% 35% at 50% 53%,
-          rgba(255, 230, 170, 0.12) 0%,
-          rgba(200, 180, 130, 0.06) 40%,
-          transparent 70%
-        ),
-        radial-gradient(
-          ellipse 80% 80% at 50% 50%,
-          transparent 40%,
-          rgba(10, 14, 31, 0.3) 100%
-        );
+      background: rgba(27, 31, 59, 0.8);
       pointer-events: none;
     }
 
@@ -594,7 +548,7 @@
   </style>
 </head>
 <body>
-  <!-- Background atmosphere (Phase 1 — untouched) -->
+  <!-- Background atmosphere — volga-bg.png + dark overlay -->
   <div class="atmosphere"></div>
 
   <!-- Content layer -->
