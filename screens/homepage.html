@@ -329,6 +329,10 @@
       transition: opacity 300ms ease, transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
     }
 
+    .card-specular.interactive {
+      transition: transform 200ms ease;
+    }
+
     /* Layer 3: Subtle top-left gloss for depth */
     .card-mockup::before {
       content: '';
@@ -723,6 +727,9 @@
       const cardSpecular = document.querySelector('.card-specular');
       const cardReflection = document.querySelector('.card-reflection');
 
+      // Track mouse offset for combining with scroll parallax
+      let mouseOffsetX = 0, mouseOffsetY = 0;
+
       if (card && cardMockup) {
         // Step 1 (450ms): fade in hero-card container
         setTimeout(() => {
@@ -742,6 +749,11 @@
           if (cardSpecular) cardSpecular.classList.add('revealed');
         }, 900);
 
+        // After reveal animation, switch specular to fast transition for mouse tracking
+        setTimeout(() => {
+          if (cardSpecular) cardSpecular.classList.add('interactive');
+        }, 1600);
+
         // Interactive tilt on mouse move (desktop) — max ±5deg
         cardMockup.addEventListener('mousemove', (e) => {
           const rect = cardMockup.getBoundingClientRect();
@@ -749,18 +761,34 @@
           const y = (e.clientY - rect.top) / rect.height - 0.5;
           const rotateY = x * 10;   // ±5deg
           const rotateX = y * -10;  // ±5deg, inverted
+          cardMockup.style.transition = 'transform 150ms ease';
           cardMockup.style.transform = `perspective(1000px) rotateY(${rotateY}deg) rotateX(${rotateX}deg)`;
 
-          // Shift reflection layer opposite to tilt
+          // Shift specular highlight to follow cursor
+          if (cardSpecular) {
+            cardSpecular.style.transform = `translate(${x * 30}px, ${y * 20}px)`;
+          }
+
+          // Shift reflection opposite to tilt, combined with scroll offset
+          mouseOffsetX = x * -20;
+          mouseOffsetY = y * -20;
           if (cardReflection) {
-            cardReflection.style.transform = `translate(${x * -20}px, ${y * -20}px)`;
+            const scrollOffset = window.scrollY * 0.05;
+            cardReflection.style.transform = `translate(${mouseOffsetX}px, ${mouseOffsetY + scrollOffset}px)`;
           }
         });
 
         cardMockup.addEventListener('mouseleave', () => {
+          cardMockup.style.transition = 'transform 250ms ease';
           cardMockup.style.transform = 'perspective(1000px) rotateY(-8deg) rotateX(3deg)';
+          mouseOffsetX = 0;
+          mouseOffsetY = 0;
+          if (cardSpecular) {
+            cardSpecular.style.transform = 'translate(0, 0)';
+          }
           if (cardReflection) {
-            cardReflection.style.transform = 'translate(0, 0)';
+            const scrollOffset = window.scrollY * 0.05;
+            cardReflection.style.transform = `translate(0px, ${scrollOffset}px)`;
           }
         });
       }
@@ -798,7 +826,8 @@
         const scrollY = window.scrollY;
         atmosphere.style.transform = `translateY(${scrollY * 0.3}px)`;
         if (cardReflection) {
-          cardReflection.style.transform = `translateY(${scrollY * 0.05}px)`;
+          const scrollOffset = scrollY * 0.05;
+          cardReflection.style.transform = `translate(${mouseOffsetX}px, ${mouseOffsetY + scrollOffset}px)`;
         }
       }, { passive: true });
     }
